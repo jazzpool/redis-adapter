@@ -1,0 +1,22 @@
+{
+  "name": "redis-adapter",
+  "version": "0.0.1",
+  "description": "Simple Redis Adapter",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zefirka/redis-adapter.git"
+  },
+  "author": "Trdat Mkrtchyan <wombtrobm@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "redis": "*"
+  },
+  "bugs": {
+    "url": "https://github.com/zefirka/redis-adapter/issues"
+  },
+  "homepage": "https://github.com/zefirka/redis-adapter#readme"
+}
