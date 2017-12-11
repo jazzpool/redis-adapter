@@ -49,7 +49,7 @@ module.exports = class Redis extends EventEmitter {
         });
     }
 
-    exec(shape) {
+    multi(shape) {
         const [commands, keys] = Object.keys(shape).reduce(([commands, entries], entry) => ([
                 commands.concat([shape[entry]]),
                 entries.concat(entry), 
