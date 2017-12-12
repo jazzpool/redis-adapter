@@ -10,6 +10,9 @@
     "type": "git",
     "url": "git+https://github.com/zefirka/redis-adapter.git"
   },
+  "engines": {
+    "node": ">=8.0"
+  },
   "author": "Trdat Mkrtchyan <wombtrobm@gmail.com>",
   "license": "MIT",
   "dependencies": {

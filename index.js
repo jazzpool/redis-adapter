@@ -3,10 +3,14 @@ const {EventEmitter} = require('events');
 
 module.exports = class Redis extends EventEmitter {
     constructor(config) {
-        super()
+        super();
         this.config = config;
     }
 
+    /**
+     * @public
+     * @return {Promise<*>}
+     */
     connect() {
         return new Promise((resolve, reject) => {
             this.connection = redis.createClient(this.config.port, this.config.host);
@@ -14,6 +18,7 @@ module.exports = class Redis extends EventEmitter {
             if (this.config.password) {
                 this.connection.auth(this.config.password, err => {
                     if (err) {
+                        this.emit('error', err);
                         reject(err);
                     }
                 });
@@ -21,7 +26,7 @@ module.exports = class Redis extends EventEmitter {
 
             this.connection.on('ready', data => {
                 this.emit('ready');
-                resolve(data)
+                resolve(data);
             });
 
             this.connection.on('error', err => {
@@ -33,12 +38,19 @@ module.exports = class Redis extends EventEmitter {
         });
     }
 
-    call(command, ...args) {
+    /**
+     * @public
+     * @param {string} command
+     * @param {array} ...rest
+     * @return {Promise<*>}
+     */
+    call(command, ...rest) {
         return new Promise((resolve, reject) => {
             if (this.connection[command]) {
-                this.connection[command].apply(this.connection, args.concat((err, data) => {
+                this.connection[command].apply(this.connection, rest.concat((err, data) => {
                     if (err) {
-                        reject(err)
+                        this.emit('error', err);
+                        reject(err);
                     }
 
                     resolve(data);
@@ -49,15 +61,21 @@ module.exports = class Redis extends EventEmitter {
         });
     }
 
+    /**
+     * @public
+     * @param {object} shape
+     * @return {Promise<object>}
+     */
     multi(shape) {
         const [commands, keys] = Object.keys(shape).reduce(([commands, entries], entry) => ([
-                commands.concat([shape[entry]]),
-                entries.concat(entry), 
+            commands.concat([shape[entry]]),
+            entries.concat(entry), 
         ]), [[], []]);
 
         return new Promise((resolve, reject) => {
             this.connection.multi(commands).exec((err, replies) => {
                 if (err) {
+                    this.emit('error', err);
                     reject(err);
                 }
 
