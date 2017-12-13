@@ -63,12 +63,30 @@ module.exports = class Redis extends EventEmitter {
 
     /**
      * @public
-     * @param {object} shape
+     * @param {array} cmds
+     * @return {Promise<array>}
+     */
+    multi(cmds) {
+        return new Promise((resolve, reject) => {
+            this.connection.multi(cmds).exec((err, data) => {
+                if (err) {
+                    this.emit('error', err);
+                    reject(err);
+                }
+
+                resolve(data);
+            });
+        });
+    }
+
+    /**
+     * @public
+     * @param {object} shapes
      * @return {Promise<object>}
      */
-    multi(shape) {
-        const [commands, keys] = Object.keys(shape).reduce(([commands, entries], entry) => ([
-            commands.concat([shape[entry]]),
+    shape(shapes) {
+        const [commands, keys] = Object.keys(shapes).reduce(([commands, entries], entry) => ([
+            commands.concat([shapes[entry]]),
             entries.concat(entry), 
         ]), [[], []]);
 
