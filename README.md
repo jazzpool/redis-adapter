@@ -26,19 +26,33 @@ client.on('end', () => {
 
  - Call methods
 ```js
-client.call('smembers', 'blocks').then(smthMembers => {
+client.call('smembers', 'blocks').then(blocks => {
     console.log('List of blocks:', blocks);
 });
 ```
 
- - Use plain shapes for `multi`
+ - Use `shape` for plain shapes:
 
 ```js
-client.multi({
+client.shape({
     blocks: ['smembers', 'blocks'],
     hashName: ['hget', 'data', 'name'],
     range: ['zrange', 'logs', 0, '+inf'],
 }).then(({blocks, hashName, range}) => {
+    console.log('blocks set:', blocks);
+    console.log('hash key "name" value:', hashName);
+    console.log('range:', range);
+});
+```
+
+ - Instant `multi`
+
+```js
+client.multi([
+    ['smembers', 'blocks'],
+    ['hget', 'data', 'name'],
+    ['zrange', 'logs', 0, '+inf'],
+]).then(([blocks, hashName, range]) => {
     console.log('blocks set:', blocks);
     console.log('hash key "name" value:', hashName);
     console.log('range:', range);
