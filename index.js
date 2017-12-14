@@ -1,6 +1,8 @@
 const redis = require('redis');
 const {EventEmitter} = require('events');
 
+const Response = require('./response');
+
 module.exports = class Redis extends EventEmitter {
     constructor(config) {
         super();
@@ -45,7 +47,7 @@ module.exports = class Redis extends EventEmitter {
      * @return {Promise<*>}
      */
     call(command, ...rest) {
-        return new Promise((resolve, reject) => {
+        return new Response(new Promise((resolve, reject) => {
             if (this.connection[command]) {
                 this.connection[command].apply(this.connection, rest.concat((err, data) => {
                     if (err) {
@@ -58,7 +60,7 @@ module.exports = class Redis extends EventEmitter {
             } else {
                 reject(new Error(`No such command: ${command}`));
             }
-        });
+        }));
     }
 
     /**
@@ -67,7 +69,7 @@ module.exports = class Redis extends EventEmitter {
      * @return {Promise<array>}
      */
     multi(cmds) {
-        return new Promise((resolve, reject) => {
+        return new Response(new Promise((resolve, reject) => {
             this.connection.multi(cmds).exec((err, data) => {
                 if (err) {
                     this.emit('error', err);
@@ -76,7 +78,7 @@ module.exports = class Redis extends EventEmitter {
 
                 resolve(data);
             });
-        });
+        }));
     }
 
     /**

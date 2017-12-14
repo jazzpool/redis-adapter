@@ -1,6 +1,6 @@
 {
   "name": "redis-adapter",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "Simple Redis Adapter",
   "main": "index.js",
   "scripts": {

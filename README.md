@@ -58,3 +58,23 @@ client.multi([
     console.log('range:', range);
 });
 ```
+
+
+## Modify response
+
+Methods:
+ - map
+ - filter
+ - reduce
+ - some
+ - every
+ - orderBy
+ - sort 
+ - paginate
+ - count
+ - asc
+ - desc
+
+```
+    client.call('smembers', 'items').map(Number).asc().then(console.log)
+```
