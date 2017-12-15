@@ -8,7 +8,6 @@ module.exports = class Response {
             'reduce',
             'some',
             'every',
-            'sort',
         ].forEach(method => {
             this[method] = function (...args) {
                 return new Response(this.promise.then(data => {
@@ -34,14 +33,23 @@ module.exports = class Response {
         return this.asc(fn);
     }
 
-    asc(fn) {
-        fn = typeof fn === 'string' ? x => x[fn] : fn
-        return this.sort((a, b) => fn(a) - fn(b));
+    sort(fn, asc = true) {
+        return new Response(this.promise.then(data => {
+            if (Array.isArray(data)) {
+                const sorter = typeof fn === 'string' ? (a, b) => (asc ? a[fn] - b[fn] : b[fn] - a[fn]) : fn
+                return data.sort(sorter);
+            }
+
+            throw new Error('Response is not iterable');
+        }))
     }
 
-    desc(fn) {
-        fn = typeof fn === 'string' ? x => x[fn] : fn
-        return this.sort((a, b) => fn(b) - fn(a));
+    asc(str) {
+        return this.sort(str, true);
+    }
+
+    desc(str) {
+        return this.sort(str, false);
     }
 
     count() {
