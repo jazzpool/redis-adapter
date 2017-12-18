@@ -30,7 +30,7 @@ module.exports = class Response {
     }
 
     orderBy(fn) {
-        return this.asc(fn);
+        return this.sort(fn);
     }
 
     sort(fn, asc = true) {

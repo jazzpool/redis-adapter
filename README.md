@@ -1,9 +1,10 @@
-# redis-adapter 🔌
+# redis-adapter 🔌 
 
-This is simple Redis client adapter:
+This is simple Redis client adapter with promises. 
+
+[![Build Status](https://travis-ci.org/zefirka/redis-adapter.svg?branch=master)](https://travis-ci.org/zefirka/redis-adapter) 
 
 ## Methods and usage
-
 
  - Create connection
 ```js 
@@ -75,6 +76,21 @@ Methods:
  - asc
  - desc
 
+```js
+client
+    .call('smembers', 'items')
+    .map(Number)
+    .asc()
+    .then(console.log);
+
+client
+    .call('zrangebyscore', 'somethings', '-inf', '+inf')
+    .map(x => Number(x.property))
+    .filter(p => p > 0)
+    .desc()
+    .then(console.log);
+
+client
+    .call('smembers')
 ```
-    client.call('smembers', 'items').map(Number).asc().then(console.log)
-```
+

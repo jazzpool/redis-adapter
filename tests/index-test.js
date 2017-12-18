@@ -17,7 +17,7 @@ const MOCK = [
 function mock(client) {
     client.connection = {}
     client.connection.smembers = (_, fn) => fn(null, MOCK)
-
+    client.connection.multi = cmds => ({exec: fn => fn(null, cmds)})
     return client
 }
 
@@ -40,7 +40,23 @@ describe('Redis', () => {
             expect(data).toEqual(MOCK);
         });
 
-        it('smembers', async () => { 
+        it('multi', async () => { 
+            const data = await client.multi([['a'], ['b'], ['c']]);
+            expect(data).toEqual([['a'], ['b'], ['c']]);
+        });
+
+        it('shape', async () => { 
+            const data = await client.shape({
+                a: [1, 2, 3],
+                b: [5, 6, 7],
+            });
+            expect(data).toEqual({
+                a: [1, 2, 3],
+                b: [5, 6, 7],
+            });
+        });
+
+        it('map', async () => { 
             const data = await client.call('smembers', '').map(x => x.split('.'))
             expect(data).toEqual(MOCK.map(x => x.split('.')));
         });
