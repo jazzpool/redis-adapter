@@ -67,7 +67,7 @@ describe('Redis', () => {
                 .map(x => x.split('.'))
                 .map(([name, n, shape]) => ({name, id: Number(n), shape}))
                 .sort('id')
-                .map(x => x.id)
+                .map(x => x.id);
 
             expect(data).toEqual([0, 3, 5, 10, 12, 23]);
         });
@@ -78,7 +78,7 @@ describe('Redis', () => {
                 .map(x => x.split('.'))
                 .map(([name, n, shape]) => ({name, id: Number(n), shape}))
                 .sort('id')
-                .map(x => x.id)
+                .map(x => x.id);
 
             expect(data).toEqual([0, 3, 5, 10, 12, 23]);
         });
@@ -89,7 +89,7 @@ describe('Redis', () => {
                 .map(x => x.split('.'))
                 .map(([name, n, shape]) => ({name, id: Number(n), shape}))
                 .asc('id')
-                .map(x => x.id)
+                .map(x => x.id);
 
             expect(data).toEqual([0, 3, 5, 10, 12, 23]);
         });
@@ -100,7 +100,7 @@ describe('Redis', () => {
                 .map(x => x.split('.'))
                 .map(([name, n, shape]) => ({name, id: Number(n), shape}))
                 .desc('id')
-                .map(x => x.id)
+                .map(x => x.id);
 
             expect(data).toEqual([0, 3, 5, 10, 12, 23].reverse());
         });
@@ -110,17 +110,17 @@ describe('Redis', () => {
             const data = await client
                 .call('smembers', '')
                 .map(x => null)
-                .take(2)
+                .take(2);
             
             expect(data).toEqual([null, null]);
             expect(data.length).toEqual(2);
         });
 
-        it('takeLatest', async () => { 
+        it('takeLast', async () => { 
             const data = await client
                 .call('smembers', '')
                 .map(x => x.split('.')[1])
-                .takeLatest(2)
+                .takeLast(2);
             
             expect(data).toEqual(['10', '12']);
             expect(data.length).toEqual(2);

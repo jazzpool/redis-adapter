@@ -76,7 +76,7 @@ Methods:
  - asc
  - desc
  - take
- - takeLatest
+ - takeLast
 
 ```js
 client

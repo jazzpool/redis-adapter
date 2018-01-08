@@ -39,19 +39,12 @@ class Response {
         return _takeWrap(this.promise, limit);
     }
 
-    takeLatest(limit) {
-        return _takeLatesWrap(this.promise, limit);
+    takeLast(limit) {
+        return _takeLastWrap(this.promise, limit);
     }
 
     sort(fn, asc = true) {
-        return new Response(this.promise.then(data => {
-            if (Array.isArray(data)) {
-                const sorter = typeof fn === 'string' ? (a, b) => (asc ? a[fn] - b[fn] : b[fn] - a[fn]) : fn
-                return data.sort(sorter);
-            }
-
-            throw NOT_ITERABLE_ERROR;
-        }))
+        return _sortWrap(this.promise, fn, asc);
     }
 
     asc(str) {
@@ -63,13 +56,7 @@ class Response {
     }
 
     count() {
-        return new Response(this.promise.then(data => {
-            if (Array.isArray(data)) {
-                return data.length
-            }
-
-            throw NOT_ITERABLE_ERROR;
-        }));
+        return _countWrap(this.promise)
     }
 
     paginate(page, limit) {
@@ -77,14 +64,7 @@ class Response {
             throw new Error('Page and Limit should be more than 30')
         }
 
-        return new Response(this.promise.then(data => {
-            if (Array.isArray(data)) {
-                const start = (page - 1) * limit;
-                return data.slice(start, start + limit);
-            }
-            
-            throw NOT_ITERABLE_ERROR;
-        }));
+        return _paginateWrap(this.promise, page, limit);
     }
 
     then(fn) {
@@ -106,7 +86,15 @@ const wrap = fn => (el, ...rest) => {
     }))
 }
 
-const _takeWrap = wrap((x, limit) => x.slice(0, limit));
-const _takeLatesWrap = wrap((x, limit) => x.slice(-limit));
+const _countWrap = wrap(data => data.length);
+const _takeWrap = wrap((data, limit) => data.slice(0, limit));
+const _takeLastWrap = wrap((data, limit) => data.slice(-limit));
+const _sortWrap = wrap((data, fn, asc = true) => {
+    return data.sort(typeof fn === 'string' ? (a, b) => (asc ? a[fn] - b[fn] : b[fn] - a[fn]) : fn);
+});
+const _paginateWrap = wrap((data, page, limit) => {
+    const start = (page - 1) * limit;
+    return data.slice(start, start + limit);
+});
 
 module.exports = Response
