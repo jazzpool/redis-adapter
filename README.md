@@ -75,6 +75,8 @@ Methods:
  - count
  - asc
  - desc
+ - take
+ - takeLatest
 
 ```js
 client
