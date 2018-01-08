@@ -1,4 +1,6 @@
-module.exports = class Response {
+const NOT_ITERABLE_ERROR = new Error('Response is not iterable');
+
+class Response {
     constructor(promise) {
         this.promise = promise;
 
@@ -15,7 +17,7 @@ module.exports = class Response {
                         return data[method](...args);
                     }
 
-                    throw new Error('Response is not iterable');
+                    throw NOT_ITERABLE_ERROR;
                 }))
             }
         })
@@ -33,6 +35,14 @@ module.exports = class Response {
         return this.sort(fn);
     }
 
+    take(limit) {
+        return _takeWrap(this.promise, limit);
+    }
+
+    takeLatest(limit) {
+        return _takeLatesWrap(this.promise, limit);
+    }
+
     sort(fn, asc = true) {
         return new Response(this.promise.then(data => {
             if (Array.isArray(data)) {
@@ -40,7 +50,7 @@ module.exports = class Response {
                 return data.sort(sorter);
             }
 
-            throw new Error('Response is not iterable');
+            throw NOT_ITERABLE_ERROR;
         }))
     }
 
@@ -58,7 +68,7 @@ module.exports = class Response {
                 return data.length
             }
 
-            throw new Error('Response is not iterable');
+            throw NOT_ITERABLE_ERROR;
         }));
     }
 
@@ -73,7 +83,7 @@ module.exports = class Response {
                 return data.slice(start, start + limit);
             }
             
-            throw new Error('Response is not iterable');
+            throw NOT_ITERABLE_ERROR;
         }));
     }
 
@@ -85,3 +95,18 @@ module.exports = class Response {
         return this.promise.catch(fn);
     }
 }
+
+const wrap = fn => (el, ...rest) => {
+    return new Response(el.then(data => {
+        if (!Array.isArray(data)) {
+            throw new Error('Response is not iterable');
+        }
+
+        return fn(data, ...rest);
+    }))
+}
+
+const _takeWrap = wrap((x, limit) => x.slice(0, limit));
+const _takeLatesWrap = wrap((x, limit) => x.slice(-limit));
+
+module.exports = Response

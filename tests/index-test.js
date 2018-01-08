@@ -104,5 +104,26 @@ describe('Redis', () => {
 
             expect(data).toEqual([0, 3, 5, 10, 12, 23].reverse());
         });
+
+
+        it('take', async () => { 
+            const data = await client
+                .call('smembers', '')
+                .map(x => null)
+                .take(2)
+            
+            expect(data).toEqual([null, null]);
+            expect(data.length).toEqual(2);
+        });
+
+        it('takeLatest', async () => { 
+            const data = await client
+                .call('smembers', '')
+                .map(x => x.split('.')[1])
+                .takeLatest(2)
+            
+            expect(data).toEqual(['10', '12']);
+            expect(data.length).toEqual(2);
+        });
     })
 });
