@@ -15,7 +15,9 @@ module.exports = class Redis extends EventEmitter {
      */
     connect() {
         return new Promise((resolve, reject) => {
-            this.connection = redis.createClient(this.config.port, this.config.host);
+            this.connection = redis.createClient(this.config.port, this.config.host, {
+                prefix: this.config.prefix || null
+            });
 
             if (this.config.password) {
                 this.connection.auth(this.config.password, err => {
@@ -43,7 +45,7 @@ module.exports = class Redis extends EventEmitter {
     /**
      * @public
      * @param {string} command
-     * @param {array} ...rest
+     * @param rest
      * @return {Promise<*>}
      */
     call(command, ...rest) {
@@ -89,7 +91,7 @@ module.exports = class Redis extends EventEmitter {
     shape(shapes) {
         const [commands, keys] = Object.keys(shapes).reduce(([commands, entries], entry) => ([
             commands.concat([shapes[entry]]),
-            entries.concat(entry), 
+            entries.concat(entry),
         ]), [[], []]);
 
         return new Promise((resolve, reject) => {
