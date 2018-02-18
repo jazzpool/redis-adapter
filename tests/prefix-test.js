@@ -36,6 +36,17 @@ describe('Redis_prefix', () => {
             client.call('quit');
         }
     });
+    test('no_prefix', async () => {
+        let client = new Redis({
+            port: port,
+            host: ip
+        });
+        client.connect();
+        client.call('set', key, "4");
+        expect(await client.call('get', key)).toBe("4");
+        await client.call('del', key);
+        client.call('quit');
+    });
     test('delete', async () => {
         for (const d of data) {
             let client = new Redis({
