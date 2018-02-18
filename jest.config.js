@@ -11,4 +11,4 @@ module.exports = {
     testRegex: '.+[\\.-]test\\.js',
     browser: false,
     verbose: true,
-}
+};
