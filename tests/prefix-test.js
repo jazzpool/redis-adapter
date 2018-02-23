@@ -24,6 +24,7 @@ describe('Redis_prefix', () => {
             client.call('quit');
         }
     });
+
     test('get', async () => {
         for (const d of data) {
             let client = new Redis({
@@ -36,6 +37,7 @@ describe('Redis_prefix', () => {
             client.call('quit');
         }
     });
+
     test('no_prefix', async () => {
         let client = new Redis({
             port: port,
@@ -47,6 +49,7 @@ describe('Redis_prefix', () => {
         await client.call('del', key);
         client.call('quit');
     });
+
     test('delete', async () => {
         for (const d of data) {
             let client = new Redis({

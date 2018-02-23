@@ -125,5 +125,14 @@ describe('Redis', () => {
             expect(data).toEqual(['10', '12']);
             expect(data.length).toEqual(2);
         });
+
+        it('reverse', async () => { 
+            const data = await client
+                .call('smembers', '')
+                .map(x => x.split('.')[1])
+                .reverse();
+
+            expect(data).toEqual([ '12', '10', '3', '0', '23', '5' ]);
+        });
     })
 });

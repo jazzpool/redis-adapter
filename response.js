@@ -10,6 +10,7 @@ class Response {
             'reduce',
             'some',
             'every',
+            'reverse',
         ].forEach(method => {
             this[method] = function (...args) {
                 return new Response(this.promise.then(data => {
