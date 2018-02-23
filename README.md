@@ -80,6 +80,7 @@ Methods:
  - desc
  - take
  - takeLast
+ - reverse
 
 ```js
 client
