@@ -2,7 +2,7 @@
 
 This is simple Redis client adapter with promises. 
 
-[![Build Status](https://travis-ci.org/zefirka/redis-adapter.svg?branch=master)](https://travis-ci.org/zefirka/redis-adapter) 
+[![Build Status](https://travis-ci.org/jazzpool/redis-adapter.svg?branch=master)](https://travis-ci.org/jazzpool/redis-adapter)
 
 ## Methods and usage
 
