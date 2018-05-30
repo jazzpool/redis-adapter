@@ -75,6 +75,10 @@ class Response {
     catch(fn) {
         return this.promise.catch(fn);
     }
+
+    json() {
+        return this.promise.then(data => JSON.parse(data));
+    }
 }
 
 const wrap = fn => (el, ...rest) => {

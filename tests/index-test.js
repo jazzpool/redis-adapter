@@ -2,8 +2,8 @@ const Redis = require('../index');
 
 let client = new Redis({
     port: 6379,
-    host: '127.0.0.1'
-})
+    host: '127.0.0.1',
+});
 
 const MOCK = [
     'joe.5.shape1',
@@ -11,28 +11,31 @@ const MOCK = [
     'doe.0.shape3',
     'doe.3.shape3',
     'poe.10.shape4',
-    'poe.12.shape5'
-]
+    'poe.12.shape5',
+];
+
+const JSON_MOCK = '{"test": "value", "test2": 123}';
 
 function mock(client) {
-    client.connection = {}
-    client.connection.smembers = (_, fn) => fn(null, MOCK)
-    client.connection.multi = cmds => ({exec: fn => fn(null, cmds)})
-    return client
+    client.connection = {};
+    client.connection.hget = (_, __, fn) => fn(null, JSON_MOCK);
+    client.connection.smembers = (_, fn) => fn(null, MOCK);
+    client.connection.multi = cmds => ({exec: fn => fn(null, cmds)});
+    return client;
 }
 
 describe('Redis', () => {
     it('should fail on real connect', async () => {
         try {
-            client.connect()
+            client.connect();
         } catch(error) {
-            expect(error instanceof Error).toBe(true)
+            expect(error instanceof Error).toBe(true);
         }
     });
 
     describe('methods', () => {
         beforeAll(() => {
-            mock(client)
+            mock(client);
         });
 
         it('smembers', async () => { 
@@ -57,7 +60,7 @@ describe('Redis', () => {
         });
 
         it('map', async () => { 
-            const data = await client.call('smembers', '').map(x => x.split('.'))
+            const data = await client.call('smembers', '').map(x => x.split('.'));
             expect(data).toEqual(MOCK.map(x => x.split('.')));
         });
 
@@ -134,5 +137,10 @@ describe('Redis', () => {
 
             expect(data).toEqual([ '12', '10', '3', '0', '23', '5' ]);
         });
-    })
+
+        it('json', async () => {
+            const data = await client.call('hget', 'a', 'b').json();
+            expect(data).toEqual({test: 'value', test2: 123});
+        });
+    });
 });
