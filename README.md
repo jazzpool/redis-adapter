@@ -81,6 +81,7 @@ Methods:
  - take
  - takeLast
  - reverse
+ - json
 
 ```js
 client
