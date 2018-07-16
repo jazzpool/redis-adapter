@@ -18,6 +18,7 @@ const JSON_MOCK = '{"test": "value", "test2": 123}';
 
 function mock(client) {
     client.connection = {};
+    client.connection.hgetall = (_, fn) => fn(null, null);
     client.connection.hget = (_, __, fn) => fn(null, JSON_MOCK);
     client.connection.smembers = (_, fn) => fn(null, MOCK);
     client.connection.multi = cmds => ({exec: fn => fn(null, cmds)});
@@ -141,6 +142,11 @@ describe('Redis', () => {
         it('json', async () => {
             const data = await client.call('hget', 'a', 'b').json();
             expect(data).toEqual({test: 'value', test2: 123});
+        });
+
+        it('or', async () => {
+            const data = await client.call('hgetall', 'a').or('DEFAULT_VALUE')
+            expect(data).toEqual('DEFAULT_VALUE');
         });
     });
 });
