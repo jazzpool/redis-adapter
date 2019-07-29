@@ -16,7 +16,9 @@ module.exports = class Redis extends EventEmitter {
     connect() {
         return new Promise((resolve, reject) => {
             this.connection = redis.createClient(this.config.port, this.config.host, {
-                prefix: this.config.prefix || null
+                prefix: this.config.prefix || null,
+                connect_timeout: this.config.connectTimeout,
+                db: this.config.db,
             });
 
             if (this.config.password) {
