@@ -79,6 +79,10 @@ class Response {
     json() {
         return this.promise.then(data => JSON.parse(data));
     }
+
+    or(defaultValue) {
+        return this.promise.then(data => data === null ? defaultValue : data);
+    }
 }
 
 const wrap = fn => (el, ...rest) => {
